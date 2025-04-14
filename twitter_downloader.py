@@ -8,28 +8,28 @@ from datetime import datetime
 import yt_dlp
 
 
-def download_x_video(url, output_dir="znalezione_filmy"):
+def download_x_video(url, output_dir="Twitter_Download"):
     """
-    Pobiera film z X (dawniej Twitter) w najlepszej dostępnej jakości.
+    Downloads a video from X (formerly Twitter) in the best available quality.
     
     Args:
-        url: Link do posta na X zawierającego film
-        output_dir: Katalog docelowy, do którego zostanie zapisany film
+        url: Link to the X post containing the video
+        output_dir: Target directory where the video will be saved
     
     Returns:
-        Ścieżka do pobranego pliku lub None w przypadku błędu
+        Path to the downloaded file or None in case of an error
     """
-    # Sprawdź czy katalog docelowy istnieje, jeśli nie - utwórz go
+    # Check if the target directory exists, create it if it doesn't
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
-    # Format nazwy pliku: data_godzina_ID_posta.mp4
+    # Filename format: date_time_post_ID.mp4
     now = datetime.now()
     timestamp = now.strftime("%Y%m%d_%H%M%S")
     
-    # Konfiguracja opcji pobierania
+    # Download options configuration
     ydl_opts = {
-        'format': 'best',  # Najlepsza jakość
+        'format': 'best',  # Best quality
         'outtmpl': os.path.join(output_dir, f'{timestamp}_%(id)s.%(ext)s'),
         'verbose': True,
     }
@@ -38,18 +38,18 @@ def download_x_video(url, output_dir="znalezione_filmy"):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             video_path = ydl.prepare_filename(info)
-            print(f"Film został pobrany do: {video_path}")
+            print(f"Video has been downloaded to: {video_path}")
             return video_path
     except Exception as e:
-        print(f"Błąd podczas pobierania: {e}", file=sys.stderr)
+        print(f"Error during download: {e}", file=sys.stderr)
         return None
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Pobieranie filmów z X (dawniej Twitter) w najlepszej jakości')
-    parser.add_argument('url', help='Link do posta na X zawierającego film')
-    parser.add_argument('-o', '--output', default='znalezione_filmy',
-                        help='Katalog docelowy dla pobranych filmów (domyślnie: znalezione_filmy)')
+    parser = argparse.ArgumentParser(description='Download videos from X (formerly Twitter) in the best quality')
+    parser.add_argument('url', help='Link to an X post containing a video')
+    parser.add_argument('-o', '--output', default='Twitter_Download',
+                        help='Target directory for downloaded videos (default: Twitter_Download)')
     args = parser.parse_args()
     
     download_x_video(args.url, args.output)
